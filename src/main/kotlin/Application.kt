@@ -15,9 +15,12 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    //staticResources("/content", "mycontent")
+
     // Plugins
     configureSerialization()
     configureDocs()
+    configureDatabase()
 
     // Application Routes
     authRouting()

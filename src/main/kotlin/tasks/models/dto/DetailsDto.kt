@@ -1,4 +1,4 @@
-package ru.mav26.tasks.models
+package ru.mav26.tasks.models.dto
 
 import java.util.UUID
 
