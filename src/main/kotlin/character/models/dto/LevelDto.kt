@@ -1,4 +1,4 @@
-package ru.mav26.character.models
+package ru.mav26.character.models.dto
 
 data class LevelDto(
     val level: Int,
