@@ -1,4 +1,4 @@
-package ru.mav26.events.models
+package ru.mav26.events.models.dto
 
 import java.util.UUID
 
