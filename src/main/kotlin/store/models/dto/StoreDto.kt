@@ -1,4 +1,4 @@
-package ru.mav26.store.models
+package ru.mav26.store.models.dto
 
 import java.util.UUID
 
