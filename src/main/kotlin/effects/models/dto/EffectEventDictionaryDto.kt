@@ -1,4 +1,4 @@
-package ru.mav26.effects.models
+package ru.mav26.effects.models.dto
 
 import java.util.UUID
 
