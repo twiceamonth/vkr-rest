@@ -10,9 +10,9 @@ data class TaskDto(
     val userLogin: String,
     val title: String,
     val endTime: OffsetDateTime, // timestamptz
-    val difficultyId: UUID,
-    val priorityId: UUID,
-    val frequencyId: UUID,
+    val difficulty: String,
+    val priority: String,
+    val frequency: String,
     val detailsId: UUID,
     val status: Boolean,
     val timerInterval: LocalTime, // time

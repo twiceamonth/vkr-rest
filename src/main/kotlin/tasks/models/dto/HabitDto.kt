@@ -8,8 +8,8 @@ data class HabitDto(
     val habitId: UUID,
     val userLogin: String,
     val title: String,
-    val difficultyId: UUID,
-    val frequencyId: UUID,
+    val difficulty: String,
+    val frequency: String,
     val timerInterval: LocalTime, // time
     val description: String,
     val createdAt: OffsetDateTime, // timestamptz

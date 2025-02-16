@@ -9,7 +9,7 @@ data class TaskCreate(
     val difficulty: String,
     val priority: String,
     val frequency: String,
-    val details: DetailsResponse, // TODO: С картинками вопрос, мб вообеще их убрать?
+    val details: List<DetailsResponse>,
     val timerInterval: String, // LocalTime, // time
     val description: String,
     val subtasks: List<String>

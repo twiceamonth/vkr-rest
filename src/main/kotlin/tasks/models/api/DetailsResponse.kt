@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DetailsResponse(
-    val linksList: List<LinksDetailsResponse>,
-    val imgList: List<ImageDetailsResponse>
+    val linkUrl: String,
+    val linkName: String,
 )
