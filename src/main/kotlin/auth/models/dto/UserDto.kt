@@ -1,4 +1,4 @@
-package ru.mav26.auth.models
+package ru.mav26.auth.models.dto
 
 import java.util.Date
 
