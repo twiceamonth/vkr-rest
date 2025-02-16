@@ -1,9 +1,9 @@
-package ru.mav26.bosses.models
+package ru.mav26.bosses.models.api
 
-import java.util.UUID
+import kotlinx.serialization.Serializable
 
-data class BossesDictionaryDto(
-    val bossId: UUID,
+@Serializable
+data class ActiveBossResponse(
     val bossName: String,
     val criteriaType: String,
     val criteriaValue: Int,
@@ -13,5 +13,6 @@ data class BossesDictionaryDto(
     val bonusType: String,
     val bonusValue: Int,
     val baseDamage: Int,
-    val imagePath: String
+    val imagePath: String,
+    val currentHp: Int
 )

@@ -1,4 +1,4 @@
-package ru.mav26.bosses.models
+package ru.mav26.bosses.models.dto
 
 import java.util.UUID
 
