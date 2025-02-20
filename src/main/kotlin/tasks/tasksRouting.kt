@@ -7,17 +7,16 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
-import ru.mav26.tasks.models.api.HabitCreate
-import ru.mav26.tasks.models.api.TaskCreate
+import ru.mav26.tasks.models.api.*
 
-fun Application.tasksRouting() {
+fun Application.tasksRouting(repository: TasksRepository) {
     routing {
         get("/tasks-list") {
-            call.respond(getTasksList())
+            call.respond(repository.getTasksList())
         }
 
         get("/habit-list") {
-            call.respond(getHabitList())
+            call.respond(repository.getHabitList())
         }
 
         get("/task-details/{taskId}") {
@@ -33,7 +32,7 @@ fun Application.tasksRouting() {
                 return@get
             }
 
-            call.respond(getTasksDetails(taskId))
+            call.respond(repository.getTaskDetails(taskId))
         }
 
         get("/habit-details/{habitId}") {
@@ -49,13 +48,13 @@ fun Application.tasksRouting() {
                 return@get
             }
 
-            call.respond(getHabitDetails(habitId))
+            call.respond(repository.getHabitDetails(habitId))
         }
 
         post("/new-task") {
             try {
                 val task = call.receive<TaskCreate>()
-                call.respond(createTask(task))
+                call.respond(repository.createTask(task))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {
@@ -66,7 +65,7 @@ fun Application.tasksRouting() {
         post("/new-habit") {
             try {
                 val habit = call.receive<HabitCreate>()
-                call.respond(createHabit(habit))
+                call.respond(repository.createHabit(habit))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {
@@ -88,8 +87,31 @@ fun Application.tasksRouting() {
             }
 
             try {
-                val newTask = call.receive<TaskCreate>()
-                call.respond(editTask(newTask))
+                val newTask = call.receive<TaskEdit>()
+                call.respond(repository.editTask(newTask, taskId))
+            } catch (ex: IllegalStateException) {
+                call.respond(HttpStatusCode.BadRequest)
+            } catch (ex: JsonConvertException) {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+
+        patch("/edit-subtask/{subtaskId}") {
+            val subtaskId = call.parameters["subtaskId"]
+
+            if(subtaskId == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {subtaskId} parameter")
+                return@patch
+            }
+
+            if(!Utility.checkUuid(subtaskId)) {
+                call.respond(HttpStatusCode.BadRequest, "Wrong type of {subtaskId}")
+                return@patch
+            }
+
+            try {
+                val newSubTask = call.receive<SubtaskEdit>()
+                call.respond(repository.editSubtask(newSubTask, subtaskId))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {
@@ -111,8 +133,31 @@ fun Application.tasksRouting() {
             }
 
             try {
-                val newHabit = call.receive<HabitCreate>()
-                call.respond(editHabit(newHabit))
+                val newHabit = call.receive<HabitEdit>()
+                call.respond(repository.editHabit(newHabit, habitId))
+            } catch (ex: IllegalStateException) {
+                call.respond(HttpStatusCode.BadRequest)
+            } catch (ex: JsonConvertException) {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+
+        patch("/edit-details/{detailsId}") {
+            val detailsId = call.parameters["detailsId"]
+
+            if(detailsId == null) {
+                call.respond(HttpStatusCode.BadRequest,"No {detailsId} parameter")
+                return@patch
+            }
+
+            if(!Utility.checkUuid(detailsId)) {
+                call.respond(HttpStatusCode.BadRequest, "Wrong type of {detailsId}")
+                return@patch
+            }
+
+            try {
+                val newDetails = call.receive<DetailsEdit>()
+                call.respond(repository.editDetails(newDetails, detailsId))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {
@@ -133,7 +178,7 @@ fun Application.tasksRouting() {
                 return@delete
             }
 
-            call.respond(deleteTask(taskId))
+            call.respond(repository.deleteTask(taskId))
         }
 
         delete("/delete-habit/{habitId}") {
@@ -149,7 +194,39 @@ fun Application.tasksRouting() {
                 return@delete
             }
 
-            call.respond(deleteHabit(habitId))
+            call.respond(repository.deleteHabit(habitId))
+        }
+
+        delete("/delete-subtask/{subtaskId}") {
+            val subtaskId = call.parameters["subtaskId"]
+
+            if(subtaskId == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {subtaskId} parameter")
+                return@delete
+            }
+
+            if(!Utility.checkUuid(subtaskId)) {
+                call.respond(HttpStatusCode.BadRequest, "Wrong type of {subtaskId}")
+                return@delete
+            }
+
+            call.respond(repository.deleteSubtask(subtaskId))
+        }
+
+        delete("/delete-details/{detailsId}") {
+            val detailsId = call.parameters["detailsId"]
+
+            if(detailsId == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {detailsId} parameter")
+                return@delete
+            }
+
+            if(!Utility.checkUuid(detailsId)) {
+                call.respond(HttpStatusCode.BadRequest, "Wrong type of {detailsId}")
+                return@delete
+            }
+
+            call.respond(repository.deleteDetails(detailsId))
         }
     }
 }

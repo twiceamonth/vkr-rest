@@ -13,7 +13,6 @@ data class TaskDto(
     val difficulty: String,
     val priority: String,
     val frequency: String,
-    val detailsId: UUID,
     val status: Boolean,
     val timerInterval: LocalTime, // time
     val description: String,

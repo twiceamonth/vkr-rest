@@ -4,6 +4,7 @@ import java.util.UUID
 
 data class DetailsDto(
     val detailsId: UUID,
-    val linkListId: UUID,
-    val imgListId: UUID
+    val linkUrl: String,
+    val linkName: String,
+    val taskId: UUID
 )

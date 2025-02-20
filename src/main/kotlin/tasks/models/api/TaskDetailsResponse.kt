@@ -6,15 +6,15 @@ import kotlinx.serialization.Serializable
 data class TaskDetailsResponse(
     val taskId: String, //UUID,
     val title: String,
-    val endTime: String, // OffsetDateTime, // timestamptz
+    val endTime: String? = null, // OffsetDateTime, // timestamptz
     val difficulty: DifficultyResponse,
     val priority: PriorityResponse,
     val frequency: FrequencyResponse,
-    val details: DetailsResponse,
+    val details: List<DetailsResponse> = emptyList(),
     val status: Boolean,
-    val timerInterval: String, // LocalTime, // time
+    val timerInterval: String? = null, // LocalTime, // time
     val description: String,
     val createdAt: String, //OffsetDateTime, // timestamptz
-    val finishedAt: String, //OffsetDateTime, // timestamptz
-    val subtasks: List<SubtaskResponse>
+    val finishedAt: String? = null, //OffsetDateTime, // timestamptz
+    val subtasks: List<SubtaskResponse> = emptyList()
 )

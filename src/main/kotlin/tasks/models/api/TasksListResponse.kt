@@ -6,12 +6,12 @@ import kotlinx.serialization.Serializable
 data class TasksListResponse(
     val taskId: String,
     val title: String,
-    val endTime: String, //OffsetDateTime, // timestamptz
+    val endTime: String? = null, //OffsetDateTime, // timestamptz
     val difficulty: String,
     val priority: String,
     val frequency: String,
     val status: Boolean,
-    val timerInterval: String, //LocalTime, // time
+    val timerInterval: String? = null, //LocalTime, // time
     val description: String,
-    val subtasks: List<SubtaskResponse>
+    val subtasks: List<SubtaskResponse> = emptyList()
 )

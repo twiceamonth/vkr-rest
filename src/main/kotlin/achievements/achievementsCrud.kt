@@ -4,11 +4,11 @@ import ru.mav26.achievements.models.api.AchievementProgressResponse
 import ru.mav26.achievements.models.api.AchievementResponse
 
 fun getAchievementsList(): List<AchievementResponse> {
-
+    return emptyList()
 }
 
 fun getAchievementsProgress(userLogin: String): List<AchievementProgressResponse> {
-
+    return emptyList()
 }
 
 fun startAchievementProgress(userLogin: String, achievementId: String) {

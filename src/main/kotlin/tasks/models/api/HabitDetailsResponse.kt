@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HabitDetailsResponse(
+    val habitId: String,
     val title: String,
     val difficulty: DifficultyResponse,
     val frequency: FrequencyResponse,

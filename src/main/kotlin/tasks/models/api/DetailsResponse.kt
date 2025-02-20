@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DetailsResponse(
+    val detailsId: String,
     val linkUrl: String,
     val linkName: String,
 )
