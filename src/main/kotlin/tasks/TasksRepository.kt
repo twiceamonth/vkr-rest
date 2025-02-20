@@ -182,6 +182,25 @@ class TasksRepository {
         }
     }
 
+    fun createSubtask(st: SubtaskCreate, taskId: String) {
+        return transaction {
+            SubtaskTable.insert {
+                it[title] = st.title
+                it[SubtaskTable.taskId] = UUID.fromString(taskId)
+            }
+        }
+    }
+
+    fun createDetails(details: DetailsCreate, taskId: String) {
+        return transaction {
+            DetailsTable.insert {
+                it[linkUrl] = details.linkUrl
+                it[linkName] = details.linkName
+                it[DetailsTable.taskId] = UUID.fromString(taskId)
+            }
+        }
+    }
+
     fun editTask(newTask: TaskEdit, taskId: String) {
         return transaction {
             val taskUUID = UUID.fromString(taskId)
@@ -227,7 +246,7 @@ class TasksRepository {
         return transaction {
             DetailsTable.update({ DetailsTable.detailsId eq UUID.fromString(detailsId) }) { row ->
                 newDetails.linkUrl?.let { row[linkUrl] = it }
-                newDetails.linkUrl?.let { row[linkUrl] = it }
+                newDetails.linkName?.let { row[linkName] = it }
             }
         }
     }

@@ -73,6 +73,52 @@ fun Application.tasksRouting(repository: TasksRepository) {
             }
         }
 
+        post("/new-subtask/{taskId}") {
+            val taskId = call.parameters["taskId"]
+
+            if(taskId == null) {
+                call.respond(HttpStatusCode.BadRequest,"No {taskId} parameter")
+                return@post
+            }
+
+            if(!Utility.checkUuid(taskId)) {
+                call.respond(HttpStatusCode.BadRequest, "Wrong type of {taskId}")
+                return@post
+            }
+
+            try {
+                val st = call.receive<SubtaskCreate>()
+                call.respond(repository.createSubtask(st, taskId))
+            } catch (ex: IllegalStateException) {
+                call.respond(HttpStatusCode.BadRequest)
+            } catch (ex: JsonConvertException) {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+
+        post("/new-details/{taskId}") {
+            val taskId = call.parameters["taskId"]
+
+            if(taskId == null) {
+                call.respond(HttpStatusCode.BadRequest,"No {taskId} parameter")
+                return@post
+            }
+
+            if(!Utility.checkUuid(taskId)) {
+                call.respond(HttpStatusCode.BadRequest, "Wrong type of {taskId}")
+                return@post
+            }
+
+            try {
+                val details = call.receive<DetailsCreate>()
+                call.respond(repository.createDetails(details, taskId))
+            } catch (ex: IllegalStateException) {
+                call.respond(HttpStatusCode.BadRequest)
+            } catch (ex: JsonConvertException) {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+
         patch("/edit-task/{taskId}") {
             val taskId = call.parameters["taskId"]
 
