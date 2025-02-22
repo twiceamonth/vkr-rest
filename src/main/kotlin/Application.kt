@@ -6,6 +6,7 @@ import ru.mav26.auth.authRouting
 import ru.mav26.bosses.bossesRouting
 import ru.mav26.character.characterRouting
 import ru.mav26.effects.effectsRouting
+import ru.mav26.events.EventsRepository
 import ru.mav26.events.eventsRouting
 import ru.mav26.store.StoreRepository
 import ru.mav26.store.storeRouting
@@ -19,6 +20,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val taskRepo = TasksRepository()
     val storeRepo = StoreRepository()
+    val eventRepo = EventsRepository()
 
     // Plugins
     configureSerialization()
@@ -29,7 +31,7 @@ fun Application.module() {
     authRouting()
     tasksRouting(taskRepo)
     storeRouting(storeRepo)
-    eventsRouting()
+    eventsRouting(eventRepo)
     effectsRouting()
     achievementsRouting()
     bossesRouting()

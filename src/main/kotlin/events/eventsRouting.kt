@@ -6,30 +6,39 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
 
-fun Application.eventsRouting() {
+fun Application.eventsRouting(repository: EventsRepository) {
     routing {
         get("/get-events-list") {
-            call.respond(getEventsList())
+            call.respond(repository.getEventsList())
         }
 
-        get("/get-active-event") {
-            call.respond(getActiveEvent())
+        get("/get-active-event/{userLogin}") {
+            val userLogin = call.parameters["userLogin"]
+
+            if(userLogin == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")
+                return@get
+            }
+
+            call.respond(repository.getActiveEvent(userLogin))
         }
 
-        patch("/update-event-progress/{activeEventId}") {
+        patch("/update-event-progress/{activeEventId}/{userLogin}/{type}") {
             val activeEventId = call.parameters["activeEventId"]
+            val userLogin = call.parameters["userLogin"]
+            val type = call.parameters["type"]
 
-            if(activeEventId == null) {
-                call.respond(HttpStatusCode.BadRequest, "No {activeEventId} specified")
+            if(activeEventId == null || userLogin == null || type == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {activeEventId} or {userLogin} or {type} specified")
                 return@patch
             }
 
-            if(!Utility.checkUuid(activeEventId)) {
-                call.respond(HttpStatusCode.BadRequest, "Wrong type of {activeEventId}")
+            if(!Utility.checkUuid(activeEventId) && (type == "p" || type == "m")) {
+                call.respond(HttpStatusCode.BadRequest, "Wrong type of {activeEventId} of {type}")
                 return@patch
             }
 
-            updateEventProgress(activeEventId)
+            repository.updateEventProgress(activeEventId, userLogin, type)
             call.respond(HttpStatusCode.OK)
         }
 
@@ -46,7 +55,7 @@ fun Application.eventsRouting() {
                 return@post
             }
 
-            createActiveEvent(eventId)
+            repository.createActiveEvent(eventId)
             call.respond(HttpStatusCode.OK)
         }
     }
