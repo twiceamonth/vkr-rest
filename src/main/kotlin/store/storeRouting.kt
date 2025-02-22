@@ -6,7 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
 
-fun Application.storeRouting(){
+fun Application.storeRouting(repository: StoreRepository){
     routing {
         get("/store-items-list/{characterId}/{type}") {
             val characterId = call.parameters["characterId"]
@@ -22,7 +22,7 @@ fun Application.storeRouting(){
                 return@get
             }
 
-            call.respond(getItemsList(type, characterId))
+            call.respond(repository.getItemsList(type, characterId))
         }
 
         get("/inventory/{characterId}") {
@@ -37,11 +37,11 @@ fun Application.storeRouting(){
                 return@get
             }
 
-            call.respond(getInventory(characterId))
+            call.respond(repository.getInventory(characterId))
         }
 
         post("/heal-button") {
-            healButton()
+            repository.healButton()
             call.respond(HttpStatusCode.OK)
         }
 
@@ -59,7 +59,7 @@ fun Application.storeRouting(){
                 return@post
             }
 
-            buyItem(characterId, itemId)
+            repository.buyItem(characterId, itemId)
             call.respond(HttpStatusCode.OK)
         }
 
