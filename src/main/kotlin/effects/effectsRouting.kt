@@ -6,14 +6,14 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
 
-fun Application.effectsRouting() {
+fun Application.effectsRouting(repository: EffectsRepository) {
     routing {
         get("/get-active-effect") {
-            call.respond(getActiveEffect())
+            call.respond(repository.getActiveEffect())
         }
 
         get("/get-effects-list") {
-            call.respond(getEffectsList())
+            call.respond(repository.getEffectsList())
         }
 
         post("/create-active-effect/{effectId}") {
@@ -29,7 +29,7 @@ fun Application.effectsRouting() {
                 return@post
             }
 
-            createActiveEffect(effectId)
+            repository.createActiveEffect(effectId)
             call.respond(HttpStatusCode.OK)
         }
     }
