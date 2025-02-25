@@ -1,6 +1,7 @@
 package ru.mav26
 
 import io.ktor.server.application.*
+import ru.mav26.achievements.AchievementsRepository
 import ru.mav26.achievements.achievementsRouting
 import ru.mav26.auth.authRouting
 import ru.mav26.bosses.BossesRepository
@@ -26,6 +27,7 @@ fun Application.module() {
     val eventRepo = EventsRepository()
     val effectsRepo = EffectsRepository()
     val bossesRepo = BossesRepository()
+    val achievementsRepo = AchievementsRepository()
 
     // Plugins
     configureSerialization()
@@ -38,7 +40,7 @@ fun Application.module() {
     storeRouting(storeRepo)
     eventsRouting(eventRepo)
     effectsRouting(effectsRepo)
-    achievementsRouting()
+    achievementsRouting(achievementsRepo)
     bossesRouting(bossesRepo)
     characterRouting()
 }

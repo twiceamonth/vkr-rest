@@ -6,10 +6,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
 
-fun Application.achievementsRouting() {
+fun Application.achievementsRouting(repository: AchievementsRepository) {
     routing {
         get("/get-achievements-list") {
-            call.respond(getAchievementsList())
+            call.respond(repository.getAchievementsList())
         }
 
         get("/get-achievements-progress/{userLogin}") {
@@ -20,7 +20,7 @@ fun Application.achievementsRouting() {
                 return@get
             }
 
-            call.respond(getAchievementsProgress(userLogin))
+            call.respond(repository.getAchievementsProgress(userLogin))
         }
 
         post("/start-achievement-progress/{achievementId}/{userLogin}") {
@@ -37,7 +37,7 @@ fun Application.achievementsRouting() {
                 return@post
             }
 
-            startAchievementProgress(userLogin, achievementId)
+            repository.startAchievementProgress(userLogin, achievementId)
             call.respond(HttpStatusCode.OK)
         }
 
@@ -55,7 +55,7 @@ fun Application.achievementsRouting() {
                 return@post
             }
 
-            updateAchievementProgress(progressId, userLogin)
+            repository.updateAchievementProgress(progressId, userLogin)
             call.respond(HttpStatusCode.OK)
         }
 
@@ -73,7 +73,7 @@ fun Application.achievementsRouting() {
                 return@post
             }
 
-            resetProgress(progressId, userLogin)
+            repository.resetProgress(progressId, userLogin)
             call.respond(HttpStatusCode.OK)
         }
     }
