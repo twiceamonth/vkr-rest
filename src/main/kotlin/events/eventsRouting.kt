@@ -20,7 +20,8 @@ fun Application.eventsRouting(repository: EventsRepository) {
                 return@get
             }
 
-            call.respond(repository.getActiveEvent(userLogin))
+            val response = repository.getActiveEvent(userLogin)
+            if(response == null) call.respond(HttpStatusCode.NotFound, "No active events") else call.respond(response)
         }
 
         patch("/update-event-progress/{activeEventId}/{userLogin}/{type}") {
