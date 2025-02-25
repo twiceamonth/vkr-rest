@@ -1,6 +1,7 @@
 package ru.mav26.store
 
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -16,19 +17,23 @@ class StoreRepository {
         return transaction {
             StoreTable.selectAll().where(StoreTable.type eq type).map { si ->
                 val itemId = ItemTable.select(ItemTable.itemId)
-                    .where(StoreTable.storeId eq ItemTable.storeId).map {
-                        it.toString()
-                    }.first()
+                    .where( ItemTable.storeId eq si[StoreTable.storeId])
+                    .map { it[ItemTable.itemId] }
+                    .firstOrNull()
 
-                val isOwned = ItemTable.select(ItemTable.itemId)
-                    .where(ItemTable.characterId eq UUID.fromString(characterId)).map {
-                        if (it != null) true else false
-                    }.first()
+                val characterUuid = UUID.fromString(characterId)
+                val isOwned = if(itemId != null){
+                    ItemTable.selectAll()
+                        .where (
+                            (ItemTable.characterId eq characterUuid) and
+                                    (ItemTable.itemId eq itemId)
+                        ).any()
+                } else { false }
 
                 val isApplied = false // TODO: ДОоделать запрос когда персонажа сделаю
 
                 StoreItemsResponse(
-                    itemId = itemId,
+                    itemId = si[StoreTable.storeId].toString(),
                     title = si[StoreTable.title],
                     imagePath = si[StoreTable.imagePath],
                     description = si[StoreTable.description],
