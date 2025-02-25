@@ -14,7 +14,7 @@ import kotlin.random.Random
 
 class EffectsRepository {
 
-    fun getActiveEffect(): ActiveEffectResponse {
+    fun getActiveEffect(): ActiveEffectResponse? {
         return transaction {
             val activeEffect = ActiveEffectEventTable.selectAll()
                 .where({ ActiveEffectEventTable.isCompleted eq false }).map {
@@ -25,38 +25,42 @@ class EffectsRepository {
                         endDate = it[ActiveEffectEventTable.endDate],
                         isCompleted = it[ActiveEffectEventTable.isCompleted]
                     )
-                }.first()
+                }.firstOrNull()
 
-            val effectInfo = EffectEventDictionaryTable.selectAll()
-                .where({ EffectEventDictionaryTable.effectEventId eq activeEffect.effectEventId }).map {
-                    EffectEventDictionaryDto(
-                        effectEventId = it[EffectEventDictionaryTable.effectEventId],
-                        effectName = it[EffectEventDictionaryTable.effectName],
-                        description = it[EffectEventDictionaryTable.description],
-                        effectIcon = it[EffectEventDictionaryTable.effectIcon],
-                        chance = it[EffectEventDictionaryTable.chance],
-                        criteriaType = it[EffectEventDictionaryTable.criteriaType],
-                        criteriaValue = it[EffectEventDictionaryTable.criteriaValue]
-                    )
-                }.first()
+            if(activeEffect == null) {
+                null
+            } else {
+                val effectInfo = EffectEventDictionaryTable.selectAll()
+                    .where({ EffectEventDictionaryTable.effectEventId eq activeEffect.effectEventId }).map {
+                        EffectEventDictionaryDto(
+                            effectEventId = it[EffectEventDictionaryTable.effectEventId],
+                            effectName = it[EffectEventDictionaryTable.effectName],
+                            description = it[EffectEventDictionaryTable.description],
+                            effectIcon = it[EffectEventDictionaryTable.effectIcon],
+                            chance = it[EffectEventDictionaryTable.chance],
+                            criteriaType = it[EffectEventDictionaryTable.criteriaType],
+                            criteriaValue = it[EffectEventDictionaryTable.criteriaValue]
+                        )
+                    }.first()
 
-            ActiveEffectResponse(
-                activeEffectId = activeEffect.activeEffectId.toString(),
-                endDate = activeEffect.endDate.toString(),
-                isCompleted = activeEffect.isCompleted,
-                effectName = effectInfo.effectName,
-                description = effectInfo.description,
-                effectIcon = effectInfo.effectIcon,
-                criteriaType = effectInfo.criteriaType,
-                criteriaValue = effectInfo.criteriaValue
-            )
+                ActiveEffectResponse(
+                    activeEffectId = activeEffect.activeEffectId.toString(),
+                    endDate = activeEffect.endDate.toString(),
+                    isCompleted = activeEffect.isCompleted,
+                    effectName = effectInfo.effectName,
+                    description = effectInfo.description,
+                    effectIcon = effectInfo.effectIcon,
+                    criteriaType = effectInfo.criteriaType,
+                    criteriaValue = effectInfo.criteriaValue
+                )
+            }
         }
     }
 
     fun getEffectsList(): List<String> {
         return transaction {
             EffectEventDictionaryTable.select(EffectEventDictionaryTable.effectEventId).map {
-                it.toString()
+                it[EffectEventDictionaryTable.effectEventId].toString()
             }
         }
     }

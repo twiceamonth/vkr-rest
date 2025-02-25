@@ -9,7 +9,9 @@ import ru.mav26.Utility
 fun Application.effectsRouting(repository: EffectsRepository) {
     routing {
         get("/get-active-effect") {
-            call.respond(repository.getActiveEffect())
+            val response = repository.getActiveEffect()
+            if (response == null) call.respond(HttpStatusCode.NotFound, "No active effect") else call.respond(response)
+
         }
 
         get("/get-effects-list") {
