@@ -6,6 +6,7 @@ import ru.mav26.achievements.achievementsRouting
 import ru.mav26.auth.authRouting
 import ru.mav26.bosses.BossesRepository
 import ru.mav26.bosses.bossesRouting
+import ru.mav26.character.CharacterRepository
 import ru.mav26.character.characterRouting
 import ru.mav26.effects.EffectsRepository
 import ru.mav26.effects.effectsRouting
@@ -28,6 +29,7 @@ fun Application.module() {
     val effectsRepo = EffectsRepository()
     val bossesRepo = BossesRepository()
     val achievementsRepo = AchievementsRepository()
+    val characterRepo = CharacterRepository()
 
     // Plugins
     configureSerialization()
@@ -42,5 +44,5 @@ fun Application.module() {
     effectsRouting(effectsRepo)
     achievementsRouting(achievementsRepo)
     bossesRouting(bossesRepo)
-    characterRouting()
+    characterRouting(characterRepo)
 }

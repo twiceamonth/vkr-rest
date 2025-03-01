@@ -11,7 +11,7 @@ import ru.mav26.character.models.api.CharacterItems
 import ru.mav26.character.models.api.CharacterStats
 import ru.mav26.character.models.api.CreateCharacter
 
-fun Application.characterRouting() {
+fun Application.characterRouting(repository: CharacterRepository) {
     routing {
         get("/get-character/{userLogin}") {
             val userLogin = call.parameters["userLogin"]
@@ -21,7 +21,7 @@ fun Application.characterRouting() {
                 return@get
             }
 
-            call.respond(getCharacter(userLogin))
+            call.respond(repository.getCharacter(userLogin))
         }
 
         get("/get-all-characters/{userLogin}") {
@@ -32,15 +32,22 @@ fun Application.characterRouting() {
                 return@get
             }
 
-            call.respond(getAllCharacters(userLogin))
+            call.respond(repository.getAllCharacters(userLogin))
         }
 
         get("/get-character-types") {
-            call.respond(getCharacterTypes())
+            call.respond(repository.getCharacterTypes())
         }
 
-        get("/get-random-dialog") {
-            call.respond(getRandomDialog())
+        get("/get-random-dialog/{mood}") {
+            val mood = call.parameters["mood"]
+
+            if (mood == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {mood}")
+                return@get
+            }
+
+            call.respond(repository.getRandomDialog(mood.toInt()))
         }
 
         post("/create-character/{userLogin}") {
@@ -53,7 +60,7 @@ fun Application.characterRouting() {
 
             try {
                 val newCharacter = call.receive<CreateCharacter>()
-                call.respond(createCharacter(newCharacter, userLogin))
+                call.respond(repository.createCharacter(newCharacter, userLogin))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {
@@ -76,11 +83,11 @@ fun Application.characterRouting() {
 
             try {
                 val newCharacter = call.receive<CharacterItems>()
-                call.respond(editCharacterItems(newCharacter, characterId))
+                call.respond(repository.editCharacterItems(newCharacter, characterId))
             } catch (ex: IllegalStateException) {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respond(HttpStatusCode.BadRequest, "IllegalStateException")
             } catch (ex: JsonConvertException) {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respond(HttpStatusCode.BadRequest, "JsonConvertException")
             }
         }
 
@@ -99,7 +106,7 @@ fun Application.characterRouting() {
 
             try {
                 val newStats = call.receive<CharacterStats>()
-                call.respond(editCharacterStats(newStats, characterId))
+                call.respond(repository.editCharacterStats(newStats, characterId))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {

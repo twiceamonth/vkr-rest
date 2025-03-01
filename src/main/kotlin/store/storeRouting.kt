@@ -8,36 +8,26 @@ import ru.mav26.Utility
 
 fun Application.storeRouting(repository: StoreRepository){
     routing {
-        get("/store-items-list/{characterId}/{type}") {
-            val characterId = call.parameters["characterId"]
+        get("/store-items-list/{userLogin}/{type}") {
+            val userLogin = call.parameters["userLogin"]
             val type = call.parameters["type"]
 
-            if(type == null || characterId == null) {
-                call.respond(HttpStatusCode.BadRequest, "No {type} or {characterId} specified")
+            if(type == null || userLogin == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {type} or {userLogin} specified")
                 return@get
             }
 
-            if(!Utility.checkUuid(characterId)) {
-                call.respond(HttpStatusCode.BadRequest, "Wrong type of {characterId}")
-                return@get
-            }
-
-            call.respond(repository.getItemsList(type, characterId))
+            call.respond(repository.getItemsList(type, userLogin))
         }
 
-        get("/inventory/{characterId}") {
-            val characterId = call.parameters["characterId"]
-            if(characterId == null) {
-                call.respond(HttpStatusCode.BadRequest, "No {characterId} specified")
+        get("/inventory/{userLogin}") {
+            val userLogin = call.parameters["userLogin"]
+            if(userLogin == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")
                 return@get
             }
 
-            if(!Utility.checkUuid(characterId)) {
-                call.respond(HttpStatusCode.BadRequest, "Wrong type of {characterId}")
-                return@get
-            }
-
-            call.respond(repository.getInventory(characterId))
+            call.respond(repository.getInventory(userLogin))
         }
 
         post("/heal-button") {
@@ -45,21 +35,21 @@ fun Application.storeRouting(repository: StoreRepository){
             call.respond(HttpStatusCode.OK)
         }
 
-        post("/buy-item/{characterId}/{itemId}") {
-            val characterId = call.parameters["characterId"]
+        post("/buy-item/{userLogin}/{itemId}") {
+            val userLogin = call.parameters["userLogin"]
             val itemId = call.parameters["itemsId"]
 
-            if(characterId == null || itemId == null) {
+            if(userLogin == null || itemId == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {characterId} or {itemsId} specified")
                 return@post
             }
 
-            if(!Utility.checkUuid(characterId) || !Utility.checkUuid(itemId)) {
+            if( !Utility.checkUuid(itemId)) {
                 call.respond(HttpStatusCode.BadRequest, "Wrong type of {characterId} or {itemId}")
                 return@post
             }
 
-            repository.buyItem(characterId, itemId)
+            repository.buyItem(userLogin, itemId)
             call.respond(HttpStatusCode.OK)
         }
 

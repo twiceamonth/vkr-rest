@@ -1,6 +1,6 @@
 package ru.mav26.character.models.dto
 
-import java.time.OffsetTime
+import java.time.OffsetDateTime
 import java.util.*
 
 data class CharacterDto(
@@ -22,7 +22,7 @@ data class CharacterDto(
     val stressCoef: Int,
     val isDead: Boolean,
     val baseDamage: Int,
-    val createdAt: OffsetTime,
-    val deadAt: OffsetTime,
+    val createdAt: OffsetDateTime,
+    val deadAt: OffsetDateTime?,
     val moodLevel: Int
 )

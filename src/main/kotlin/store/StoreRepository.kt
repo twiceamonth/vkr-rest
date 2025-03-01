@@ -13,7 +13,7 @@ import java.util.*
 
 class StoreRepository {
 
-    fun getItemsList(type: String, characterId: String): List<StoreItemsResponse> {
+    fun getItemsList(type: String, userLogin: String): List<StoreItemsResponse> {
         return transaction {
             StoreTable.selectAll().where(StoreTable.type eq type).map { si ->
                 val itemId = ItemTable.select(ItemTable.itemId)
@@ -21,11 +21,10 @@ class StoreRepository {
                     .map { it[ItemTable.itemId] }
                     .firstOrNull()
 
-                val characterUuid = UUID.fromString(characterId)
                 val isOwned = if(itemId != null){
                     ItemTable.selectAll()
                         .where (
-                            (ItemTable.characterId eq characterUuid) and
+                            (ItemTable.userLogin eq userLogin) and
                                     (ItemTable.itemId eq itemId)
                         ).any()
                 } else { false }
@@ -33,7 +32,8 @@ class StoreRepository {
                 val isApplied = false // TODO: ДОоделать запрос когда персонажа сделаю
 
                 StoreItemsResponse(
-                    itemId = si[StoreTable.storeId].toString(),
+                    itemId = itemId.toString(),
+                    storeId = si[StoreTable.storeId].toString(),
                     title = si[StoreTable.title],
                     imagePath = si[StoreTable.imagePath],
                     description = si[StoreTable.description],
@@ -46,15 +46,15 @@ class StoreRepository {
         }
     }
 
-    fun getInventory(characterId: String): List<InventoryResponse> {
+    fun getInventory(userLogin: String): List<InventoryResponse> {
         return transaction {
-            ItemTable.selectAll().where(ItemTable.characterId eq UUID.fromString(characterId)).map { i ->
+            ItemTable.selectAll().where(ItemTable.userLogin eq userLogin).map { i ->
                 InventoryResponse(
                     type = StoreTable.select(StoreTable.type).where(StoreTable.storeId eq i[ItemTable.storeId])
-                        .map { it.toString() }.first(),
+                        .map { it[StoreTable.type] }.first(),
                     imagePath = StoreTable.select(StoreTable.imagePath)
                         .where(StoreTable.storeId eq i[ItemTable.storeId])
-                        .map { it.toString() }.first()
+                        .map { it[StoreTable.imagePath] }.first()
                 )
             }
         }
@@ -64,11 +64,11 @@ class StoreRepository {
         // TODO: Доделать когда персонажа сделаю
     }
 
-    fun buyItem(characterId: String, storeId: String) {
+    fun buyItem(userLogin: String, storeId: String) {
         transaction {
             ItemTable.insert {
                 it[this.storeId] = UUID.fromString(storeId)
-                it[ItemTable.characterId] = UUID.fromString(characterId)
+                it[ItemTable.userLogin] = userLogin
             }
         }
     }
