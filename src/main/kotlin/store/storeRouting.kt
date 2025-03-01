@@ -30,8 +30,20 @@ fun Application.storeRouting(repository: StoreRepository){
             call.respond(repository.getInventory(userLogin))
         }
 
-        post("/heal-button") {
-            repository.healButton()
+        post("/heal-button/{characterId}") {
+            val characterId = call.parameters["characterId"]
+
+            if(characterId == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {characterId} specified")
+                return@post
+            }
+
+            if(!Utility.checkUuid(characterId)) {
+                call.respond(HttpStatusCode.BadRequest, "Wrong type of {characterId}")
+                return@post
+            }
+
+            repository.healButton(characterId)
             call.respond(HttpStatusCode.OK)
         }
 
@@ -44,7 +56,7 @@ fun Application.storeRouting(repository: StoreRepository){
                 return@post
             }
 
-            if( !Utility.checkUuid(itemId)) {
+            if(!Utility.checkUuid(itemId)) {
                 call.respond(HttpStatusCode.BadRequest, "Wrong type of {characterId} or {itemId}")
                 return@post
             }

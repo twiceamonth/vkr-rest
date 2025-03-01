@@ -5,6 +5,8 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
+import ru.mav26.character.models.db.CharacterTable
 import ru.mav26.store.models.api.InventoryResponse
 import ru.mav26.store.models.api.StoreItemsResponse
 import ru.mav26.store.models.db.ItemTable
@@ -29,7 +31,23 @@ class StoreRepository {
                         ).any()
                 } else { false }
 
-                val isApplied = false // TODO: ДОоделать запрос когда персонажа сделаю
+                val isApplied = CharacterTable.select(
+                    CharacterTable.hairId,
+                    CharacterTable.chestplateId,
+                    CharacterTable.footsId,
+                    CharacterTable.legsId,
+                    CharacterTable.backgroundId
+                ).map {
+                    listOf(
+                        it[CharacterTable.hairId],
+                        it[CharacterTable.chestplateId],
+                        it[CharacterTable.footsId],
+                        it[CharacterTable.legsId],
+                        it[CharacterTable.backgroundId]
+                    )
+                }.any { fields ->
+                    itemId in fields
+                }
 
                 StoreItemsResponse(
                     itemId = itemId.toString(),
@@ -60,8 +78,23 @@ class StoreRepository {
         }
     }
 
-    fun healButton() {
-        // TODO: Доделать когда персонажа сделаю
+    fun healButton(characterId: String) {
+        transaction {
+            val maxHp = CharacterTable.select(CharacterTable.maxHp)
+                .where(CharacterTable.characterId eq UUID.fromString(characterId))
+                .first()[CharacterTable.maxHp]
+
+            val coins = CharacterTable.select(CharacterTable.coins)
+                .where(CharacterTable.characterId eq UUID.fromString(characterId))
+                .first()[CharacterTable.coins]
+
+            if(coins < 2500) return@transaction
+
+            CharacterTable.update({ CharacterTable.characterId eq UUID.fromString(characterId) }) {
+                it[CharacterTable.currentHp] = maxHp
+                it[CharacterTable.coins] = coins - 2500
+            }
+        }
     }
 
     fun buyItem(userLogin: String, storeId: String) {
