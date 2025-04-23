@@ -12,9 +12,9 @@ import java.util.*
 
 class TasksRepository {
 
-    fun getTasksList(): List<TasksListResponse> {
+    fun getTasksList(userLogin: String): List<TasksListResponse> {
         return transaction {
-            val tasks = TaskTable.selectAll().toList()
+            val tasks = TaskTable.selectAll().where(TaskTable.userLogin eq userLogin).toList()
             val taskIds = tasks.map { it[TaskTable.taskId] }
 
             val subtasksByTask = SubtaskTable
@@ -46,9 +46,9 @@ class TasksRepository {
         }
     }
 
-    fun getHabitList(): List<HabitListResponse> {
+    fun getHabitList(userLogin: String): List<HabitListResponse> {
         return transaction {
-            HabitTable.selectAll().map { habit ->
+            HabitTable.selectAll().where(HabitTable.userLogin eq userLogin).map { habit ->
                 HabitListResponse(
                     habitId = habit[HabitTable.habitId].toString(),
                     title = habit[HabitTable.title],
@@ -146,7 +146,7 @@ class TasksRepository {
     fun createTask(task: TaskCreate) {
         return transaction {
             val insertStatement = TaskTable.insert {
-                it[userLogin] = task.userLogin
+                it[TaskTable.userLogin] = task.userLogin
                 it[title] = task.title
                 if(task.endTime != null) it[endTime] = OffsetDateTime.parse(task.endTime)
                 it[difficulty] = task.difficulty
@@ -171,7 +171,7 @@ class TasksRepository {
     fun createHabit(habit: HabitCreate) {
         return transaction {
             HabitTable.insert {
-                it[userLogin] = habit.userLogin
+                it[HabitTable.userLogin] = habit.userLogin
                 it[title] = habit.title
                 it[difficulty] = habit.difficulty
                 it[frequency] = habit.frequency

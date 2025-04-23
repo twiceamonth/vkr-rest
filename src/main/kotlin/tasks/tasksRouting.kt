@@ -11,12 +11,26 @@ import ru.mav26.tasks.models.api.*
 
 fun Application.tasksRouting(repository: TasksRepository) {
     routing {
-        get("/tasks-list") {
-            call.respond(repository.getTasksList())
+        get("/tasks-list/{userLogin}") {
+            val userLogin = call.parameters["userLogin"]
+
+            if(userLogin == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {userLogin} parameter")
+                return@get
+            }
+
+            call.respond(repository.getTasksList(userLogin))
         }
 
-        get("/habit-list") {
-            call.respond(repository.getHabitList())
+        get("/habit-list/{userLogin}") {
+            val userLogin = call.parameters["userLogin"]
+
+            if(userLogin == null) {
+                call.respond(HttpStatusCode.BadRequest, "No {userLogin} parameter")
+                return@get
+            }
+
+            call.respond(repository.getHabitList(userLogin))
         }
 
         get("/task-details/{taskId}") {
