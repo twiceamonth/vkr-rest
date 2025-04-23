@@ -3,6 +3,7 @@ package ru.mav26
 import io.ktor.server.application.*
 import ru.mav26.achievements.AchievementsRepository
 import ru.mav26.achievements.achievementsRouting
+import ru.mav26.auth.AuthRepository
 import ru.mav26.auth.authRouting
 import ru.mav26.bosses.BossesRepository
 import ru.mav26.bosses.bossesRouting
@@ -30,14 +31,16 @@ fun Application.module() {
     val bossesRepo = BossesRepository()
     val achievementsRepo = AchievementsRepository()
     val characterRepo = CharacterRepository()
+    val authRepo = AuthRepository()
 
     // Plugins
     configureSerialization()
     configureDocs()
     configureDatabase()
+    configureAuthentication()
 
     // Application Routes
-    authRouting()
+    authRouting(authRepo)
     tasksRouting(taskRepo)
     storeRouting(storeRepo)
     eventsRouting(eventRepo)

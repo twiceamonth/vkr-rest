@@ -31,6 +31,8 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.ktor.server.swagger)
     implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.server.auth.jwt)
+    implementation("at.favre.lib:bcrypt:0.10.2")
     implementation(libs.ktor.server.netty)
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.config.yaml)
