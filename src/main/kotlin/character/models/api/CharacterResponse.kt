@@ -19,6 +19,7 @@ data class CharacterResponse(
     val exp: Int,
     val coins: Int,
     val stressCoef: Int,
+    val moodLevel: Int,
     val createdAt: String, //OffsetTime
     val deadAt: String //OffsetTime
 )

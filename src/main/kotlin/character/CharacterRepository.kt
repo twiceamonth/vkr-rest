@@ -99,6 +99,7 @@ class CharacterRepository {
                 exp = character.exp,
                 coins = character.coins,
                 stressCoef = character.stressCoef,
+                moodLevel = character.moodLevel,
                 createdAt = character.createdAt.toString(),
                 deadAt = character.deadAt.toString()
             )
@@ -182,6 +183,7 @@ class CharacterRepository {
                         exp = c.exp,
                         coins = c.coins,
                         stressCoef = c.stressCoef,
+                        moodLevel = c.moodLevel,
                         createdAt = c.createdAt.toString(),
                         deadAt = c.deadAt.toString()
                     )
