@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 fun Application.configureDatabase() {
     Database.connect(
-        "jdbc:postgresql://localhost:5432/postgres?currentSchema=vkr",
+        "jdbc:postgresql://vkr-db:5432/postgres?currentSchema=vkr",
         user = "postgres",
         password = "postgres"
     )

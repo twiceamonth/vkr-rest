@@ -143,10 +143,10 @@ class TasksRepository {
         }.first()
     }
 
-    fun createTask(task: TaskCreate) {
+    fun createTask(task: TaskCreate, userLogin: String) {
         return transaction {
             val insertStatement = TaskTable.insert {
-                it[TaskTable.userLogin] = task.userLogin
+                it[TaskTable.userLogin] = userLogin
                 it[title] = task.title
                 if(task.endTime != null) it[endTime] = OffsetDateTime.parse(task.endTime)
                 it[difficulty] = task.difficulty
@@ -168,10 +168,10 @@ class TasksRepository {
         }
     }
 
-    fun createHabit(habit: HabitCreate) {
+    fun createHabit(habit: HabitCreate, userLogin: String) {
         return transaction {
             HabitTable.insert {
-                it[HabitTable.userLogin] = habit.userLogin
+                it[HabitTable.userLogin] = userLogin
                 it[title] = habit.title
                 it[difficulty] = habit.difficulty
                 it[frequency] = habit.frequency
@@ -237,7 +237,6 @@ class TasksRepository {
                 newHabit.description?.let { row[description] = it }
                 newHabit.streakCount?.let { row[streakCount] = it }
                 newHabit.lastPerformedAt?.let { row[lastPerformedAt] = OffsetDateTime.parse(it) }
-                newHabit.userLogin?.let { row[userLogin] = it }
             }
         }
     }

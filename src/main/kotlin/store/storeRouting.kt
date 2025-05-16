@@ -5,11 +5,12 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
+import ru.mav26.getUserLogin
 
 fun Application.storeRouting(repository: StoreRepository){
     routing {
-        get("/store-items-list/{userLogin}/{type}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/store-items-list/{type}") {
+            val userLogin = call.getUserLogin()
             val type = call.parameters["type"]
 
             if(type == null || userLogin == null) {
@@ -20,8 +21,8 @@ fun Application.storeRouting(repository: StoreRepository){
             call.respond(repository.getItemsList(type, userLogin))
         }
 
-        get("/inventory/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/inventory}") {
+            val userLogin = call.getUserLogin()
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")
                 return@get
@@ -47,8 +48,8 @@ fun Application.storeRouting(repository: StoreRepository){
             call.respond(HttpStatusCode.OK)
         }
 
-        post("/buy-item/{userLogin}/{itemId}") {
-            val userLogin = call.parameters["userLogin"]
+        post("/buy-item/{itemId}") {
+            val userLogin = call.getUserLogin()
             val itemId = call.parameters["itemsId"]
 
             if(userLogin == null || itemId == null) {

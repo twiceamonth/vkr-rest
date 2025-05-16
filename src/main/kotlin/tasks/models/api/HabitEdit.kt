@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HabitEdit(
-    val userLogin: String? = null,
     val title: String? = null,
     val difficulty: String? = null,
     val frequency: String? = null,

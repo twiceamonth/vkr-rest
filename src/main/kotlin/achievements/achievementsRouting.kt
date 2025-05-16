@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
+import ru.mav26.getUserLogin
 
 fun Application.achievementsRouting(repository: AchievementsRepository) {
     routing {
@@ -12,8 +13,8 @@ fun Application.achievementsRouting(repository: AchievementsRepository) {
             call.respond(repository.getAchievementsList())
         }
 
-        get("/get-achievements-progress/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/get-achievements-progress") {
+            val userLogin = call.getUserLogin()
 
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")
@@ -23,8 +24,8 @@ fun Application.achievementsRouting(repository: AchievementsRepository) {
             call.respond(repository.getAchievementsProgress(userLogin))
         }
 
-        post("/start-achievement-progress/{achievementId}/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        post("/start-achievement-progress/{achievementId}") {
+            val userLogin = call.getUserLogin()
             val achievementId = call.parameters["achievementId"]
 
             if(userLogin == null || achievementId == null) {
@@ -41,8 +42,8 @@ fun Application.achievementsRouting(repository: AchievementsRepository) {
             call.respond(HttpStatusCode.OK)
         }
 
-        post("/update-achievement-progress/{progressId}/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        post("/update-achievement-progress/{progressId}") {
+            val userLogin = call.getUserLogin()
             val progressId = call.parameters["progressId"]
 
             if(userLogin == null || progressId == null) {
@@ -59,8 +60,8 @@ fun Application.achievementsRouting(repository: AchievementsRepository) {
             call.respond(HttpStatusCode.OK)
         }
 
-        post("/reset-progress/{progressId}/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        post("/reset-progress/{progressId}") {
+            val userLogin = call.getUserLogin()
             val progressId = call.parameters["progressId"]
 
             if(userLogin == null || progressId == null) {

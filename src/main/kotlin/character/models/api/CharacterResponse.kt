@@ -17,6 +17,7 @@ data class CharacterResponse(
     val maxHp: Int,
     val currentHp: Int,
     val exp: Int,
+    val expToNextLvl: Int,
     val coins: Int,
     val stressCoef: Int,
     val moodLevel: Int,

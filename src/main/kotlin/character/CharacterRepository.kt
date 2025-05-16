@@ -9,10 +9,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import ru.mav26.character.models.api.*
-import ru.mav26.character.models.db.BonusesTable
-import ru.mav26.character.models.db.CharacterTable
-import ru.mav26.character.models.db.CharacterTypeTable
-import ru.mav26.character.models.db.DialogsTable
+import ru.mav26.character.models.db.*
 import ru.mav26.character.models.dto.BonusesDto
 import ru.mav26.character.models.dto.CharacterDto
 import ru.mav26.character.models.dto.CharacterTypeDto
@@ -20,6 +17,7 @@ import ru.mav26.store.models.db.ItemTable
 import ru.mav26.store.models.db.StoreTable
 import java.time.OffsetDateTime
 import java.util.*
+import java.util.logging.Level
 import kotlin.random.Random
 
 class CharacterRepository {
@@ -83,6 +81,10 @@ class CharacterRepository {
                 }.first()
             }.first()
 
+            val expToNextLvl = LevelTable.selectAll().where(LevelTable.level eq (character.level+1)).map {
+                it[LevelTable.exp]
+            }.first()
+
             CharacterResponse(
                 characterId = character.characterId.toString(),
                 characterName = character.characterName,
@@ -101,7 +103,8 @@ class CharacterRepository {
                 stressCoef = character.stressCoef,
                 moodLevel = character.moodLevel,
                 createdAt = character.createdAt.toString(),
-                deadAt = character.deadAt.toString()
+                deadAt = character.deadAt.toString(),
+                expToNextLvl = expToNextLvl
             )
         }
     }
@@ -185,7 +188,8 @@ class CharacterRepository {
                         stressCoef = c.stressCoef,
                         moodLevel = c.moodLevel,
                         createdAt = c.createdAt.toString(),
-                        deadAt = c.deadAt.toString()
+                        deadAt = c.deadAt.toString(),
+                        expToNextLvl = -1
                     )
                 )
             }

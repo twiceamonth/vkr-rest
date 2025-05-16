@@ -5,11 +5,12 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
+import ru.mav26.getUserLogin
 
 fun Application.bossesRouting(repository: BossesRepository) {
     routing {
-        get("/get-active-boss/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/get-active-boss") {
+            val userLogin = call.getUserLogin()
 
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")
@@ -23,8 +24,8 @@ fun Application.bossesRouting(repository: BossesRepository) {
             call.respond(repository.getBossesList())
         }
 
-        post("/make-damage/{userLogin}/{tDIff}") {
-            val userLogin = call.parameters["userLogin"]
+        post("/make-damage/{tDIff}") {
+            val userLogin = call.getUserLogin()
             val tDIff = call.parameters["tDIff"]
 
             if(userLogin == null || tDIff == null) {

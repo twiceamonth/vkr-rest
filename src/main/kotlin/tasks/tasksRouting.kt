@@ -7,12 +7,13 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
+import ru.mav26.getUserLogin
 import ru.mav26.tasks.models.api.*
 
 fun Application.tasksRouting(repository: TasksRepository) {
     routing {
-        get("/tasks-list/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/tasks-list") {
+            val userLogin = call.getUserLogin()
 
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} parameter")
@@ -22,8 +23,8 @@ fun Application.tasksRouting(repository: TasksRepository) {
             call.respond(repository.getTasksList(userLogin))
         }
 
-        get("/habit-list/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/habit-list") {
+            val userLogin = call.getUserLogin()
 
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} parameter")
@@ -67,8 +68,9 @@ fun Application.tasksRouting(repository: TasksRepository) {
 
         post("/new-task") {
             try {
+                val userLogin = call.getUserLogin()
                 val task = call.receive<TaskCreate>()
-                call.respond(repository.createTask(task))
+                call.respond(repository.createTask(task, userLogin))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {
@@ -78,8 +80,9 @@ fun Application.tasksRouting(repository: TasksRepository) {
 
         post("/new-habit") {
             try {
+                val userLogin = call.getUserLogin()
                 val habit = call.receive<HabitCreate>()
-                call.respond(repository.createHabit(habit))
+                call.respond(repository.createHabit(habit, userLogin))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {

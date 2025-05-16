@@ -13,11 +13,12 @@ fun Application.configureAuthentication() {
             verifier(
                 JWT.require(Algorithm.HMAC256(Consts.secret))
                     .withIssuer(Consts.issuer)
+                    .withAudience(Consts.audience)
                     .build()
             )
             validate { credential ->
-                val login = credential.payload.subject
-                if (login != null) {
+                val userLogin = credential.payload.getClaim("userLogin").asString()
+                if (!userLogin.isNullOrEmpty()) {
                     JWTPrincipal(credential.payload)
                 } else {
                     null
@@ -25,4 +26,12 @@ fun Application.configureAuthentication() {
             }
         }
     }
+}
+
+fun ApplicationCall.getUserLogin() : String {
+    val principal = principal<JWTPrincipal>()
+        ?: throw IllegalArgumentException("Missing principal")
+
+    return principal.payload.getClaim("userLogin").asString()
+        ?: throw IllegalArgumentException("Missing userLogin claim")
 }

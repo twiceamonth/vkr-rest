@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.mav26.Utility
+import ru.mav26.getUserLogin
 
 fun Application.eventsRouting(repository: EventsRepository) {
     routing {
@@ -12,8 +13,8 @@ fun Application.eventsRouting(repository: EventsRepository) {
             call.respond(repository.getEventsList())
         }
 
-        get("/get-active-event/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/get-active-event") {
+            val userLogin = call.getUserLogin()
 
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")
@@ -24,9 +25,9 @@ fun Application.eventsRouting(repository: EventsRepository) {
             if(response == null) call.respond(HttpStatusCode.NotFound, "No active events") else call.respond(response)
         }
 
-        patch("/update-event-progress/{activeEventId}/{userLogin}/{type}") {
+        patch("/update-event-progress/{activeEventId}/{type}") {
             val activeEventId = call.parameters["activeEventId"]
-            val userLogin = call.parameters["userLogin"]
+            val userLogin = call.getUserLogin()
             val type = call.parameters["type"]
 
             if(activeEventId == null || userLogin == null || type == null) {

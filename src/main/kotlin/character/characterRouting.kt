@@ -10,11 +10,12 @@ import ru.mav26.Utility
 import ru.mav26.character.models.api.CharacterItems
 import ru.mav26.character.models.api.CharacterStats
 import ru.mav26.character.models.api.CreateCharacter
+import ru.mav26.getUserLogin
 
 fun Application.characterRouting(repository: CharacterRepository) {
     routing {
-        get("/get-character/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/get-character") {
+            val userLogin = call.getUserLogin()
 
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")
@@ -24,8 +25,8 @@ fun Application.characterRouting(repository: CharacterRepository) {
             call.respond(repository.getCharacter(userLogin))
         }
 
-        get("/get-all-characters/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        get("/get-all-characters") {
+            val userLogin = call.getUserLogin()
 
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")
@@ -50,8 +51,8 @@ fun Application.characterRouting(repository: CharacterRepository) {
             call.respond(repository.getRandomDialog(mood.toInt()))
         }
 
-        post("/create-character/{userLogin}") {
-            val userLogin = call.parameters["userLogin"]
+        post("/create-character") {
+            val userLogin = call.getUserLogin()
 
             if(userLogin == null) {
                 call.respond(HttpStatusCode.BadRequest, "No {userLogin} specified")

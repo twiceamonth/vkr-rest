@@ -8,6 +8,5 @@ data class HabitCreate(
     val difficulty: String,
     val frequency: String,
     val timerInterval: String? = null, //LocalTime, // time
-    val description: String,
-    val userLogin: String
+    val description: String
 )
