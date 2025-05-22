@@ -11,5 +11,6 @@ data class HabitListResponse(
     val frequency: String,
     val timerInterval: String, //LocalTime, // time
     val description: String,
-    val streakCount: Int
+    val streakCount: Int,
+    val lastPerformed: String
 )

@@ -56,7 +56,8 @@ class TasksRepository {
                     frequency =  habit[HabitTable.frequency],
                     timerInterval =  habit[HabitTable.timerInterval].toString(),
                     description =  habit[HabitTable.description],
-                    streakCount =  habit[HabitTable.streakCount]
+                    streakCount =  habit[HabitTable.streakCount],
+                    lastPerformed = habit[HabitTable.lastPerformedAt].toString()
                 )
             }
         }
@@ -145,24 +146,32 @@ class TasksRepository {
 
     fun createTask(task: TaskCreate, userLogin: String) {
         return transaction {
+            val taskId = UUID.randomUUID()
             val insertStatement = TaskTable.insert {
+                it[TaskTable.taskId] = taskId
                 it[TaskTable.userLogin] = userLogin
-                it[title] = task.title
-                if(task.endTime != null) it[endTime] = OffsetDateTime.parse(task.endTime)
-                it[difficulty] = task.difficulty
-                it[priority] = task.priority
-                it[frequency] = task.frequency
-                if(task.timerInterval != null) it[timerInterval] = LocalTime.parse(task.timerInterval)
-                it[description] = task.description
-                it[baseExp] = 1
+                it[TaskTable.title] = task.title
+                it[TaskTable.endTime] = if(task.endTime != "null" && task.endTime != null) OffsetDateTime.parse(task.endTime) else null
+                it[TaskTable.difficulty] = task.difficulty
+                it[TaskTable.priority] = task.priority
+                it[TaskTable.frequency] = task.frequency
+                it[TaskTable.timerInterval] = if(task.timerInterval != "null" && task.timerInterval != null) LocalTime.parse(task.timerInterval) else null
+                it[TaskTable.description] = task.description
+                it[TaskTable.baseExp] = 1
             }
-
-            val taskId = insertStatement[TaskTable.taskId]
 
             for (subtaskTitle in task.subtasks) {
                 SubtaskTable.insert {
                     it[title] = subtaskTitle
                     it[SubtaskTable.taskId] = taskId
+                }
+            }
+
+            for (detail in task.details) {
+                DetailsTable.insert {
+                    it[DetailsTable.linkUrl] = detail.linkUrl
+                    it[DetailsTable.linkName] = detail.linkName
+                    it[DetailsTable.taskId] = taskId
                 }
             }
         }
@@ -175,7 +184,7 @@ class TasksRepository {
                 it[title] = habit.title
                 it[difficulty] = habit.difficulty
                 it[frequency] = habit.frequency
-                it[timerInterval] = if(habit.timerInterval != null) LocalTime.parse(habit.timerInterval) else null
+                it[timerInterval] = if(habit.timerInterval != "null" && habit.timerInterval != null) LocalTime.parse(habit.timerInterval) else null
                 it[description] = habit.description
                 it[baseExp] = 1
             }
@@ -206,12 +215,12 @@ class TasksRepository {
             val taskUUID = UUID.fromString(taskId)
             TaskTable.update({ TaskTable.taskId eq taskUUID }) { row ->
                 newTask.title?.let { row[title] = it }
-                row[endTime] = newTask.endTime?.let { OffsetDateTime.parse(it) }
+                row[endTime] = if(newTask.endTime != "null" && newTask.endTime != null) OffsetDateTime.parse(newTask.endTime) else null
                 newTask.difficulty?.let { row[difficulty] = it }
                 newTask.priority?.let { row[priority] = it }
                 newTask.frequency?.let { row[frequency] = it }
                 newTask.status?.let { row[status] = it }
-                row[timerInterval] = newTask.timerInterval?.let { LocalTime.parse(it) }
+                row[timerInterval] = if(newTask.timerInterval != "null" && newTask.timerInterval != null) LocalTime.parse(newTask.timerInterval) else null
                 newTask.description?.let { row[description] = it }
                 row[finishedAt] = newTask.finishedAt?.let { OffsetDateTime.parse(it) }
             }
@@ -233,7 +242,7 @@ class TasksRepository {
                 newHabit.title?.let { row[title] = it }
                 newHabit.difficulty?.let { row[difficulty] = it }
                 newHabit.frequency?.let { row[frequency] = it }
-                row[timerInterval] = newHabit.timerInterval?.let { LocalTime.parse(it) }
+                row[timerInterval] = if(newHabit.timerInterval != "null" && newHabit.timerInterval != null) LocalTime.parse(newHabit.timerInterval) else null
                 newHabit.description?.let { row[description] = it }
                 newHabit.streakCount?.let { row[streakCount] = it }
                 newHabit.lastPerformedAt?.let { row[lastPerformedAt] = OffsetDateTime.parse(it) }
