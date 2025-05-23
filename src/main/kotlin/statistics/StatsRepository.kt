@@ -94,9 +94,9 @@ class StatsRepository {
         for ((date, diff, cnt) in rows) {
             val prev = byDate.getOrDefault(date, Triple(0, 0, 0))
             val updated = when (diff) {
-                "light"  -> prev.copy(first = cnt.toInt())
+                "low"  -> prev.copy(first = cnt.toInt())
                 "medium" -> prev.copy(second = cnt.toInt())
-                "hard"   -> prev.copy(third = cnt.toInt())
+                "high"   -> prev.copy(third = cnt.toInt())
                 else     -> prev
             }
             byDate[date] = updated
