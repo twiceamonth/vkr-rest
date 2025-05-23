@@ -7,6 +7,10 @@ import org.jetbrains.exposed.sql.javatime.JavaLocalDateColumnType
 import org.jetbrains.exposed.sql.javatime.month
 import org.jetbrains.exposed.sql.javatime.year
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.mav26.statistics.models.api.AvgTimeStatsApi
+import ru.mav26.statistics.models.api.DailyCountApi
+import ru.mav26.statistics.models.api.DailyStatsApi
+import ru.mav26.statistics.models.api.SummaryStatsApi
 import ru.mav26.statistics.models.dto.AvgTimeStats
 import ru.mav26.statistics.models.dto.DailyStats
 import ru.mav26.statistics.models.dto.SummaryStats
@@ -16,7 +20,7 @@ import java.time.Duration
 import java.time.LocalDate
 
 class StatsRepository {
-    fun totalByDifficulty(userLogin: String): SummaryStats = transaction {
+    fun totalByDifficulty(userLogin: String): SummaryStatsApi = transaction {
         val total = TaskTable
             .selectAll().where { (TaskTable.finishedAt.isNotNull()) and (TaskTable.userLogin eq userLogin) }
             .count()
@@ -40,7 +44,7 @@ class StatsRepository {
             .count()
             .toInt()
 
-        SummaryStats(total, light, medium, hard)
+        SummaryStatsApi(total, light, medium, hard)
     }
 
     private fun avgDaysFor(diff: String, userLogin: String): Double = transaction {
@@ -57,15 +61,15 @@ class StatsRepository {
         avgSeconds / 86400.0
     }
 
-    fun avgTimeByDifficulty(userLogin: String): AvgTimeStats = transaction {
-        AvgTimeStats(
+    fun avgTimeByDifficulty(userLogin: String): AvgTimeStatsApi = transaction {
+        AvgTimeStatsApi(
             lightDays  = avgDaysFor("low", userLogin),
             mediumDays = avgDaysFor("medium", userLogin),
             hardDays   = avgDaysFor("high", userLogin)
         )
     }
 
-    fun dailyCounts(userLogin: String, year: Int, month: Int): DailyStats = transaction {
+    fun dailyCounts(userLogin: String, year: Int, month: Int): DailyStatsApi = transaction {
         val rows = TaskTable
             .select(
                 TaskTable.finishedAt!!.castTo<LocalDate>(JavaLocalDateColumnType()),
@@ -97,11 +101,11 @@ class StatsRepository {
             }
             byDate[date] = updated
         }
-        DailyStats(
+        DailyStatsApi(
             byDate.entries
                 .sortedBy { it.key }
                 .map { (d, triple) ->
-                    DailyCount(d, triple.first, triple.second, triple.third)
+                    DailyCountApi(d.toString(), triple.first, triple.second, triple.third)
                 }
         )
     }
