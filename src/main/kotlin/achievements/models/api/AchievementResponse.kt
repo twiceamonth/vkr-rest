@@ -10,5 +10,6 @@ data class AchievementResponse(
     val resetOnEvent: Boolean,
     val resentEventType: String,
     val criteriaType: String,
-    val criteriaValue: Int
+    val criteriaValue: Int,
+    val imagePath: String
 )

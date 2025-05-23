@@ -25,7 +25,8 @@ class AchievementsRepository {
                     resetOnEvent = it[AchievementsDictionaryTable.resetOnEvent],
                     resentEventType = it[AchievementsDictionaryTable.resetEventType],
                     criteriaType = it[AchievementsDictionaryTable.criteriaType],
-                    criteriaValue = it[AchievementsDictionaryTable.criteriaValue]
+                    criteriaValue = it[AchievementsDictionaryTable.criteriaValue],
+                    imagePath = it[AchievementsDictionaryTable.imagePath],
                 )
             }
         }
@@ -50,7 +51,8 @@ class AchievementsRepository {
                     criteriaValue = achievement[AchievementsDictionaryTable.criteriaValue],
                     progressValue = it[AchievementsProgressTable.progressValue],
                     isCompleted = it[AchievementsProgressTable.isCompleted],
-                    completeDate = it[AchievementsProgressTable.completeDate]?.toString()
+                    completeDate = it[AchievementsProgressTable.completeDate]?.toString(),
+                    imagePath = achievement[AchievementsDictionaryTable.imagePath],
                 )
             }
         }

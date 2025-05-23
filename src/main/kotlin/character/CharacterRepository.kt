@@ -1,15 +1,13 @@
 package ru.mav26.character
 
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import ru.mav26.character.models.api.*
 import ru.mav26.character.models.db.*
+import ru.mav26.character.models.db.CharacterTypeTable.select
 import ru.mav26.character.models.dto.BonusesDto
 import ru.mav26.character.models.dto.CharacterDto
 import ru.mav26.character.models.dto.CharacterTypeDto
@@ -85,6 +83,11 @@ class CharacterRepository {
                 it[LevelTable.exp]
             }.first()
 
+            val cTypeBody = select(CharacterTypeTable.imagePath)
+                .where { CharacterTypeTable.characterType eq character.characterType }
+                .map { it[CharacterTypeTable.imagePath] }
+                .first()
+
             CharacterResponse(
                 characterId = character.characterId.toString(),
                 characterName = character.characterName,
@@ -94,7 +97,7 @@ class CharacterRepository {
                 foots = foots,
                 legs = legs,
                 background = background,
-                characterType = character.characterType,
+                characterType = cTypeBody,
                 level = character.level,
                 maxHp = character.maxHp,
                 currentHp = character.currentHp,
@@ -169,6 +172,11 @@ class CharacterRepository {
                     }.first()
                 }.first()
 
+                val cTypeBody = select(CharacterTypeTable.imagePath)
+                    .where { CharacterTypeTable.characterType eq c.characterType }
+                    .map { it[CharacterTypeTable.imagePath] }
+                    .first()
+
                 response.add(
                     CharacterResponse(
                         characterId = c.characterId.toString(),
@@ -179,7 +187,7 @@ class CharacterRepository {
                         foots = foots,
                         legs = legs,
                         background = background,
-                        characterType = c.characterType,
+                        characterType = cTypeBody,
                         level = c.level,
                         maxHp = c.maxHp,
                         currentHp = c.currentHp,

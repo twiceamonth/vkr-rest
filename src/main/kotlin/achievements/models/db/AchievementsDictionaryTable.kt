@@ -10,6 +10,7 @@ object AchievementsDictionaryTable: Table("achievements_dictionary") {
     val resetEventType = varchar("reset_event_type", 15)
     val criteriaType = varchar("criteria_type", 15)
     val criteriaValue = integer("criteria_value")
+    val imagePath = text("image_path")
 
     override val primaryKey = PrimaryKey(achievementId)
 }

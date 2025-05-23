@@ -12,5 +12,6 @@ object AchievementsProgressTable: Table("achievements_progress") {
     val completeDate = date("complete_date").nullable()
     val achievementId = uuid("achievement_id").references(AchievementsDictionaryTable.achievementId)
 
+
     override val primaryKey = PrimaryKey(progressId)
 }

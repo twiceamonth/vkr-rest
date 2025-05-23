@@ -222,7 +222,7 @@ class TasksRepository {
                 newTask.status?.let { row[status] = it }
                 row[timerInterval] = if(newTask.timerInterval != "null" && newTask.timerInterval != null) LocalTime.parse(newTask.timerInterval) else null
                 newTask.description?.let { row[description] = it }
-                row[finishedAt] = newTask.finishedAt?.let { OffsetDateTime.parse(it) }
+                row[finishedAt] = if(newTask.finishedAt != "null" && newTask.finishedAt != null) OffsetDateTime.parse(newTask.finishedAt) else null
             }
         }
     }
@@ -239,13 +239,13 @@ class TasksRepository {
     fun editHabit(newHabit: HabitEdit, habitId: String) {
         transaction {
             HabitTable.update({ HabitTable.habitId eq UUID.fromString(habitId) }) { row ->
-                newHabit.title?.let { row[title] = it }
-                newHabit.difficulty?.let { row[difficulty] = it }
-                newHabit.frequency?.let { row[frequency] = it }
-                row[timerInterval] = if(newHabit.timerInterval != "null" && newHabit.timerInterval != null) LocalTime.parse(newHabit.timerInterval) else null
-                newHabit.description?.let { row[description] = it }
-                newHabit.streakCount?.let { row[streakCount] = it }
-                newHabit.lastPerformedAt?.let { row[lastPerformedAt] = OffsetDateTime.parse(it) }
+                newHabit.title?.let { row[HabitTable.title] = it }
+                newHabit.difficulty?.let { row[HabitTable.difficulty] = it }
+                newHabit.frequency?.let { row[HabitTable.frequency] = it }
+                row[HabitTable.timerInterval] = if(newHabit.timerInterval != "null" && newHabit.timerInterval != null) LocalTime.parse(newHabit.timerInterval) else null
+                newHabit.description?.let { row[HabitTable.description] = it }
+                newHabit.streakCount?.let { row[HabitTable.streakCount] = it }
+                newHabit.lastPerformedAt?.let { row[HabitTable.lastPerformedAt] = OffsetDateTime.parse(it) }
             }
         }
     }

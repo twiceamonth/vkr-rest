@@ -15,5 +15,6 @@ data class AchievementProgressResponse(
     val criteriaValue: Int,
     val progressValue: Int,
     val isCompleted: Boolean,
-    val completeDate: String?
+    val completeDate: String?,
+    val imagePath: String
 )
